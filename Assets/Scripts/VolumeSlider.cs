@@ -2,12 +2,15 @@ using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.UI;
 
-public class SliderSettings : MonoBehaviour
+public class VolumeSlider : MonoBehaviour
 {
     [SerializeField] private AudioMixerGroup _audioMixer;
     [SerializeField] private Slider _slider;
     [SerializeField] private string _exposedParameterName;
-    [SerializeField] private TurnOffOnButtonSettings _turnOffOnButtonSettings;
+    [SerializeField] private TurnOffOnVolumeButton _turnOffOnButtonSettings;
+
+    private float _minVolume = -80f;
+    private int _volumeCoefficient = 20;
 
     private void OnEnable()
     {
@@ -21,16 +24,13 @@ public class SliderSettings : MonoBehaviour
 
     public void ChangeVolume(float volume)
     {
-        if (_turnOffOnButtonSettings._isMuted == false)
+        if (volume == 0)
         {
-            if (volume == 0)
-            {
-                _audioMixer.audioMixer.SetFloat(_exposedParameterName, -80);
-            }
-            else
-            {
-                _audioMixer.audioMixer.SetFloat(_exposedParameterName, Mathf.Log10(volume) * 20);
-            }
+            _audioMixer.audioMixer.SetFloat(_exposedParameterName, _minVolume);
+        }
+        else
+        {
+            _audioMixer.audioMixer.SetFloat(_exposedParameterName, Mathf.Log10(volume) * _volumeCoefficient);
         }
     }
 }
